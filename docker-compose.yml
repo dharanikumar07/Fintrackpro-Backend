@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        container_name: fintrackpro_app
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        networks:
+            - backend-network
+        depends_on:
+            - db
+            - redis
+
+    web:
+        build:
+            context: ./
+            dockerfile: docker-compose/nginx.dockerfile
+        container_name: nginx_backend
+        restart: unless-stopped
+        ports:
+            - "5223:80"
+            - "5443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx:/etc/nginx/conf.d
+        networks:
+            - backend-network
+
+    db:
+        image: postgres:latest
+        container_name: postgres_db
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: laravel
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - backend-network
+
+    redis:
+        image: redis:latest
+        container_name: redis
+        restart: unless-stopped
+        ports:
+            - "6379:6379"
+        networks:
+            - backend-network
+
+networks:
+    backend-network:
+        driver: bridge
+
+volumes:
+    postgres_data:

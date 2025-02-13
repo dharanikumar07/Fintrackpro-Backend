@@ -1,0 +1,13 @@
+1.) download docker in your local machine
+
+2.) paste .env file  optional [cp .env.example .env]
+
+3.) docker compose up --build -d
+
+4.) [docker exec -it fintrackpro_app bash] run this command to enter into docker bash
+
+5.) [composer install] inside the docker bash
+
+6.) [php artisan key:generate] run this command to generate a app key
+
+7.) [php artisan migrate] run this command to create a table and migrate 
